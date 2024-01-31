@@ -115,7 +115,7 @@ headers = {
 user_id = ''
 user_ps = ''
 
-client = hemisLoginClient(user_id = user_id,user_ps = user_ps')
+client = hemisLoginClient(user_id = user_id,user_ps = user_ps)
 #print(client)
 
 t = client.get(URL_DAVOMAT)
