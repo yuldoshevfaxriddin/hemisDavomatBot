@@ -7,6 +7,7 @@ URL_TABLE = "https://student.ubtuit.uz/education/exam-table" #  dars jadvali
 URL_LOGIN = "https://student.ubtuit.uz/dashboard/login" # login page
 URL_DAVOMAT = 'https://student.ubtuit.uz/education/attendance' # davomat
 
+
 TOKEN = "5976427002:AAE5Yiuvv1Ws6Ca-oklP68t3Fa9SzlFftGM"
 URL_SEND_MESSAGE = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
@@ -57,15 +58,31 @@ def getDavomatList(base_html):
     except :
         return 'error'
     
+def getProfilData(base_html):
+    soup = bs4.BeautifulSoup(base_html,'lxml')
+    header_data = soup.find('header',{'class':'main-header'}).find('nav').find('ul').find_all('li')
+    profil_img = soup.find('header',{'class':'main-header'}).find('nav').find('ul').find('img',{'class':'user-image'})['src']
+    username = soup.find('header',{'class':'main-header'}).find('nav').find('ul').find('span',{'class':'user-name'}).text
+    guruh = soup.find('header',{'class':'main-header'}).find('nav').find('ul').find('span',{'class':'user-role'}).text
+    respons = {
+        'user_image':profil_img,
+        'username': username,
+        'guruh':guruh
+    }
+    return respons
+
 
 def hemisLoginClient(user_id=None,user_ps=None ):
     if not (user_id is None or user_ps is None):
         session= r.Session()
         headers = {
-            'User-Agent':'Chrome/51.0.2704.103 Safari/537.36'
+            'User-Agent':'Chrome/51.0.2704.103 Safari/537.36 (Assalomu aleykum)'
         }
         respons_get = session.get( URL_LOGIN, headers = headers)
         html = respons_get.text
+        with open('test.html','w',encoding='utf-8') as f :
+            f.write(html)
+
         soup = bs4.BeautifulSoup(html,'lxml')
         csrf_frontend = soup.find("input")['value']
         login_data = {
@@ -77,66 +94,105 @@ def hemisLoginClient(user_id=None,user_ps=None ):
         if respons_get.status_code != 200:
             print(f'Error {respons_get.url} status code not 200')
             return
-        '''
-        print(respons_get)
-        print(respons_get.cookies.get_dict())
-        print(respons_get.text)
-        print(respons_post)
-        print(respons_post.cookies.get_dict())
-        print(respons_post.text)
-        '''
         login_data['cookies'] = respons_post.cookies.get_dict()
         with open('cookies.json','w') as file:
            file.write(json.dumps(respons_post.cookies.get_dict()))
 
         # return login_data
         return session
+    
+def checkUserLogin(user_id,user_password,cookies_dict=None):
+    # userni tekshiradi, login bo'lgan bo'lsa davomatni uzatadi,bolmasa login qilib davomatni uzatadi
+    respons = r.get(URL_DAVOMAT,cookies=cookies_dict)
+    # cookies fayl tasdiqlangan bo'lsa
+    if len(respons.history)==0:
+        print('login bo\'lgan user')
+        text = getDavomatList(respons.text)
+        profil = getProfilData(respons.text)
+        returned_data = {
+            'login':'succes',
+            'data':text,
+            'cookies':cookies_dict,
+            'profil-data':profil
+        }
+        # print(returned_data)
+        respons.close()
+        return returned_data
+    # cookies tasdiqlanmasa
+    else:
+        print('not login')
+        new_client = hemisLoginClient(user_id=user_id,user_ps=user_password)
+        returned = new_client.get(URL_DAVOMAT)
+        if len(returned.history)>0:
+            print('login error')
+            returned_data = {
+                'login':'login-error',
+                'user-id':user_id,
+                'password':user_password
+            }
+            with open('login-errors.txt','a') as f:
+                f.write(f'{user_id}  {user_password}\n')
+            with open(str(user_id)+'-login-error.html','w',encoding='utf-8') as file:
+                file.write(returned.text)
+            new_client.close()
+            return returned_data
+        else :
+            text = getDavomatList(returned.text)
+            profil = getProfilData(returned.text)
+            print('login succes')
+            returned_data = {
+                'login':'succes',
+                'cookies':returned.cookies.get_dict(),
+                'profil-data':profil,
+                'data':text
+            }
+            new_client.close()
+            return returned_data
+        
 
-headers = {
-    'Accept': 'text/html, */*; q=0.01',
-    'Accept-Encoding': 'gzip, deflate, br', 
-    'Accept-Language': 'en-US,en;q=0.5', 
-    'Connection': 'keep-alive', 
-    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 
-    'Cookie': 'frontend=sovof9tl1bb5v9leagkhq7sh9v; _csrf-frontend=fb1319230a0efba0a4e239d780d418262087be233118c41abada040f7318743ca%3A2%3A%7Bi%3A0%3Bs%3A14%3A%22_csrf-frontend%22%3Bi%3A1%3Bs%3A32%3A%22IQ0H4FjPm1f0JT90C1s5l-ROmIt_3Vth%22%3B%7D; _frontendUser=e65d589ae348dcb1cbdfaae24486c23040114a27b01dd93da24890ddd609bf34a%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_frontendUser%22%3Bi%3A1%3Bs%3A46%3A%22%5B%2218%22%2C%22tG3FjTMA1yF6uNcm2Wx7O3KVRIU2ETxP%22%2C3600%5D%22%3B%7D', 
-    'DNT': '1', 'Host': 'student.ubtuit.uz', 
-    'Referer': 'https://student.ubtuit.uz/education/attendance', 
-    'Sec-Fetch-Dest': 'empty', 
-    'Sec-Fetch-Mode': 'cors', 
-    'Sec-Fetch-Site': 'same-origin', 
-    'Sec-GPC': '1', 
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0', 
-    'X-CSRF-Token': 'vOT1umyOs_jlvZLQsx8KXMve5_w_4dN4KDQwKovRp8b1tcXyWMjZqIiM9OD5SzNsiO-UyVPMgTdFfUR1uIfTrg==', 
-    'X-PJAX': 'true', 
-    'X-PJAX-Container': '#attendance-grid', 
-    'X-Requested-With': 'XMLHttpRequest'
-    }
+# user_id_test = '390201100297'
+# user_ps_test = '390201100297d'
 
-user_id = ''
-user_ps = ''
+# user_id_test = '390201100299'
+# user_ps_test = 'AB8310385'
 
-client = hemisLoginClient(user_id = user_id,user_ps = user_ps)
-#print(client)
+# user_id_test = '390201100296'
+# user_ps_test = 'AB390201100296'
+# user_id_test = '390201100040'
+# user_ps_test = 'AB81663288'
+        
+# user_id_test = '390201100067'
+# user_ps_test = 'AB43218765'
 
-t = client.get(URL_DAVOMAT)
+# print(checkUserLogin(user_id_test,user_ps_test))
+
+# client = hemisLoginClient(user_id = user_id_test,user_ps = user_ps_test)
+# print(client)
+# test = {"_frontendasdUser": "d589ssaee348dcb1cbdfaae24486c23040114a27b01dd93da24890ddd609bf34a%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_frontendUser%22%3Bi%3A1%3Bs%3A46%3A%22%5B%2218%22%2C%22tG3FjTMA1yF6uNcm2Wx7O3KVRIU2ETxP%22%2C3600%5D%22%3B%7D", "frontend": "3rqhdlivbpap99rneh8l27cv13"}
+
+# print(checkUserLogin(user_id_test,user_ps_test))
+
+
+# t = client.get(URL_DAVOMAT)
 # t = r.get(URL_DAVOMAT,cookies=local_cookies)
-print(t)
-davomat = getDavomatList(t.text)
-message = ''
-if davomat[0][0]=="Ma'lumotlar mavjud emas":
-    print('Sizda qoldirilgan darslar yo\q !')
-    sendMessageBot('Sizda qoldirilgan darslar yo\'q !')
-else:
-    for i in davomat:
-        message +=  f''' 🆔 {i[0]}
-        🕧 {i[1]}
-        📅 {i[2]}
-        📚 {i[3]}
-        🔖 {i[4]}
-        🤫 {i[5]}
-        ⏲ {i[6]}
-        👨‍🏫 {i[7]}\n '''
-    message +='Qoldirilgan darslar: '+str(len(davomat))
-    sendMessageBot(message)
+# print(t)
+# davomat = getDavomatList(t.text)
+# print(davomat)
+# message = ''
+# if davomat[0][0]=="Ma'lumotlar mavjud emas":
+#     print('Sizda qoldirilgan darslar yo\q !')
+#     sendMessageBot('Sizda qoldirilgan darslar yo\'q !')
+# else:
+#     for i in davomat:
+#         message +=  f''' 🆔 {i[0]}
+#         🕧 {i[1]}
+#         📅 {i[2]}
+#         📚 {i[3]}
+#         🔖 {i[4]}
+#         🤫 {i[5]}
+#         ⏲ {i[6]}
+#         👨‍🏫 {i[7]}\n '''
+#     message +='Qoldirilgan darslar: '+str(len(davomat))
+#     sendMessageBot(message)
 
 
