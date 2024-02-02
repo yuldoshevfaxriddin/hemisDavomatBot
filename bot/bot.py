@@ -77,6 +77,13 @@ def get_davomat(message:types.Message):
     # edit_text = 'malom '
     # bot.edit_message_text(chat_id=message.from_user.id,message_id=message.id,text=edit_text)
 
+@bot.message_handler(commands=['get-all-data'])
+def send_all_data_statistik(message:types.Message):
+    print('send data',message.text)
+    if 'login' in message.text:
+        bot.send_document(chat_id=message.from_user.id, document=open('login-errors.txt','r'))
+
+
 @bot.message_handler(func=lambda message: True )
 def login_message(message:types.Message):    
     data = message.text.split()
