@@ -6,7 +6,7 @@ import json
 import dataBaseTest 
 import main
 
-TOKEN = "5695969116:AAHVXa83GZ_T9ebUXgH3Uy7vXkIe1jmfxu0"
+TOKEN = "6931900857:AAHLe1o1sXFo3S0jryo1gs_Us9b4FI7mTDY"
 bot = telebot.TeleBot(TOKEN)
 
 def davomatGenerate(davomat_lst):
@@ -17,7 +17,7 @@ def davomatGenerate(davomat_lst):
         📅 {i[2]}
         📚 {i[3]}
         🔖 {i[4]}
-        🤫 {i[5]}
+        🤫 {i[5]} (Sababli)
         ⏲ {i[6]}
         👨‍🏫 {i[7]}\n '''
     message +='Qoldirilgan darslar: '+str(len(davomat_lst))
@@ -45,16 +45,44 @@ def start(message:types.Message):
             hemis_username += (i[3] +'\n')
         hemis_login = check_user[0][1]
         hemis_password = check_user[0][2]
-        send_data = hemis_login+'-'+hemis_password
+        send_data = hemis_login+'-'+hemis_password#+'-'+message.message_id
         keyboard = types.InlineKeyboardMarkup()
         davomat = types.InlineKeyboardButton('Davomatni olish',callback_data='getDavomat-'+send_data)
         keyboard.add(davomat)
         bot.send_message(tg_user_id,'Tizimdan ro\'yhatdan o\'tgansiz ! Profilingiz :\n<b>'+hemis_username+'</b>',parse_mode='html',reply_markup=keyboard)
-        # bot.delete_message(message.chat.id, int(message.message_id))
+
+@bot.message_handler(commands=['davomat'])
+def get_davomat(message:types.Message):
+    print('get davomat')
+    bot.send_message(message.from_user.id,'Davomat yuklanmoqda')
+
+    get_data = dataBaseTest.selectUserId(message.from_user.id)
+    if len(get_data) != 0 :
+        get_hemis_login = get_data[0][1]
+        get_hemis_password = get_data[0][2]
+        get_hemis_cookies = json.loads(get_data[0][5])
+
+        davomat = main.checkUserLogin(get_hemis_login,get_hemis_password,get_hemis_cookies)
+        if davomat['login']=='succes':
+            # print(davomat)
+            dataBaseTest.updateCookies(message.from_user.id,json.dumps(davomat['cookies']))
+            # davomatni uzatish
+            bot.send_message(message.from_user.id,davomatGenerate(davomat['data']))
+        else:
+            bot.send_message(message.from_user.id,'Login parol xato !')
+    else:
+        bot.send_message(message.from_user.id,'Botdan ro\'yxatdan o\'tmagansiz !')
+
+
+    # edit_text = 'malom '
+    # bot.edit_message_text(chat_id=message.from_user.id,message_id=message.id,text=edit_text)
 
 @bot.message_handler(func=lambda message: True )
-def button1(message:types.Message):    
+def login_message(message:types.Message):    
     data = message.text.split()
+    # bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+    # print('delete true')
+
     # print(data)
     if len(data) > 2:
         login = data[1]
@@ -69,7 +97,6 @@ def button1(message:types.Message):
         no = types.InlineKeyboardButton('Yo\'q',callback_data='no')
         keyboard.add(yes,no)
         bot.send_message(message.chat.id, f"<b>login : {login}\nparol : {password} </b>\nqabul qilinsinmi ?",reply_markup=keyboard,parse_mode='html')
-    
     else :
         message_info = '''Tizimdan foydalanish uchun hemis login parolingizni kiriting ! Masalan: \n<b>login 390201100 AB1234567 </b>'''
         bot.send_message(message.chat.id,message_info,parse_mode='html')
@@ -77,9 +104,12 @@ def button1(message:types.Message):
   
 @bot.callback_query_handler(func=lambda message: message.data.startswith('yes'))
 def callback_data_yes(message:types.CallbackQuery):
+
+    # bot.delete_message(chat_id=message.from_user.id, message_id=message.message_id)
+    # print('delete yes')
+
     # davomatni uzat
     print('yes')
-
     data = message.data.split('-')
 
     hemis_login = data[1]
@@ -122,18 +152,24 @@ def callback_data_yes(message:types.CallbackQuery):
             # davomatni uzatish
             bot.send_message(message.from_user.id,davomatGenerate(davomat['data']))
         else:
-            bot.send_message(message.from_user.id,'Hemis tizimiga kirishda xatolik !\nLogin parolingizni tekshirish ko\'ring')
+            bot.send_message(message.from_user.id,'Hemis tizimiga kirishda xatolik !\nLogin parolingizni tekshirib ko\'ring')
     
 
 @bot.callback_query_handler(func=lambda message: message.data=='no')
 def callback_data_no(message:types.CallbackQuery):
     # qaytadan kiritishni sora
+    # bot.delete_message(chat_id=message.from_user.id, message_id=int(message.message.message.message_id))
+    # print('delete no')
+
     print('no')
     bot.send_message(message.from_user.id,'Qaytadan kiriting')
 
 @bot.callback_query_handler(func=lambda message: message.data.startswith('getDavomat'))
 def callback_data_getDavomat(message:types.CallbackQuery):
     # davomatni uzat
+    # bot.delete_message(chat_id=message.from_user.id, message_id=message.message)
+    # print('delete davomat')
+
     print('davomat')
     get_data = dataBaseTest.selectUserId(message.from_user.id)
     get_hemis_login = get_data[0][1]
@@ -147,9 +183,7 @@ def callback_data_getDavomat(message:types.CallbackQuery):
         # davomatni uzatish
         bot.send_message(message.from_user.id,davomatGenerate(davomat['data']))
     else:
-        bot.send_message(message.from_user.id,'Qaytadan kiriting')
-
-
+        bot.send_message(message.from_user.id,'Qaytadan kiriting, Login bilan muammo !')
 
     #Start bot
 if __name__ == '__main__':

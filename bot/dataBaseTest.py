@@ -43,7 +43,7 @@ def selectAllData():
 # telegram user borlgini tekshirish
 def selectUserId(tg_user_id):
     # telegram user borligini tekshirish
-    SELECT_ALL_DATA_QUERY = '''SELECT * FROM {} WHERE tg_user_id={}'''.format(DB_TABLE_NAME,tg_user_id)
+    SELECT_ALL_DATA_QUERY = '''SELECT * FROM {} WHERE tg_user_id='{}' '''.format(DB_TABLE_NAME,tg_user_id)
     respons = cursor.execute(SELECT_ALL_DATA_QUERY).fetchall()
     return respons
 
@@ -76,11 +76,11 @@ def updateCookies(tg_id,cookies,db_name = DB_TABLE_NAME):
 # client3 = selectUserId(tg_user_id=1742197944)
 # print(client3)
 
-if __name__ == '__main__':
-    test = selectAllData()
-    print(len(test))
-    for i in test:
-        print(i)
+# if __name__ == '__main__':
+#     test = selectAllData()
+#     print(len(test))
+#     for i in test:
+#         print(i)
 
 # # print(updateUserDisabled(8,0).fetchall())
 
