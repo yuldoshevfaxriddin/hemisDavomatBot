@@ -7,7 +7,8 @@ import dataBaseTest
 import main
 
 
-TOKEN = ''
+TOKEN = '6931900857:AAHLe1o1sXFo3S0jryo1gs_Us9b4FI7mTDY'
+#TOKEN = ''
 bot = telebot.TeleBot(TOKEN)
 
 def davomatGenerate(davomat_lst):
@@ -18,7 +19,7 @@ def davomatGenerate(davomat_lst):
         📅 {i[2]}
         📚 {i[3]}
         🔖 {i[4]}
-        🤫 {i[5]} (Sababli)
+        🤫 {i[5]} (Sabablimi ?)
         ⏲ {i[6]}
         👨‍🏫 {i[7]}\n '''
     message +='Qoldirilgan darslar: '+str(len(davomat_lst))
@@ -88,7 +89,7 @@ def send_all_data_statistik(message:types.Message):
 @bot.message_handler(func=lambda message: True )
 def login_message(message:types.Message):    
     data = message.text.split()
-    bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+    # bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
     # print('delete true')
 
     # print(data)
@@ -113,8 +114,8 @@ def login_message(message:types.Message):
 @bot.callback_query_handler(func=lambda message: message.data.startswith('yes'))
 def callback_data_yes(message:types.CallbackQuery):
 
-    bot.delete_message(chat_id=message.from_user.id, message_id=message.message_id)
-    # print('delete yes')
+    bot.delete_message(chat_id=message.from_user.id, message_id=message.message.id)
+    print('delete yes')
 
     # davomatni uzat
     print('yes')
@@ -166,8 +167,8 @@ def callback_data_yes(message:types.CallbackQuery):
 @bot.callback_query_handler(func=lambda message: message.data=='no')
 def callback_data_no(message:types.CallbackQuery):
     # qaytadan kiritishni sora
-    bot.delete_message(chat_id=message.from_user.id, message_id=int(message.message.message.message_id))
-    # print('delete no')
+    bot.delete_message(chat_id=message.from_user.id, message_id=message.message.id)
+    print('delete no')
 
     print('no')
     bot.send_message(message.from_user.id,'Qaytadan kiriting')
@@ -175,7 +176,7 @@ def callback_data_no(message:types.CallbackQuery):
 @bot.callback_query_handler(func=lambda message: message.data.startswith('getDavomat'))
 def callback_data_getDavomat(message:types.CallbackQuery):
     # davomatni uzat
-    bot.delete_message(chat_id=message.from_user.id, message_id=message.message)
+    bot.delete_message(chat_id=message.from_user.id, message_id=message.message.id)
     # print('delete davomat')
 
     print('davomat')
