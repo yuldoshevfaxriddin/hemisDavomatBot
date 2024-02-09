@@ -31,7 +31,7 @@ def insertData(hemis_user_id,hemis_user_password,hemis_profil,hemis_img,tg_user_
     # hemis_img = ''
     # hemis_cookies_dict = ''
     INSERT_INTO_QUERY = f'''INSERT INTO {DB_TABLE_NAME} (hemis_user_id,hemis_user_password,hemis_profil,hemis_profil_image,hemis_cookies_dict,tg_user_id,tg_username,tg_first_name,tg_last_name,user_disabled) VALUES ('{hemis_user_id}','{hemis_user_password}','{hemis_profil}','{hemis_img}','{hemis_cookies_dict}','{tg_user_id}','{tg_username}','{tg_first_name}','{tg_last_name}','{user_disabled}'); '''
-    print(INSERT_INTO_QUERY)
+    #print(INSERT_INTO_QUERY)
     respons = cursor.execute(INSERT_INTO_QUERY)
     data_base_connection.commit()
     return respons
@@ -43,8 +43,8 @@ def selectAllData():
 # telegram user borlgini tekshirish
 def selectUserId(tg_user_id):
     # telegram user borligini tekshirish
-    SELECT_ALL_DATA_QUERY = '''SELECT * FROM {} WHERE tg_user_id='{}' '''.format(DB_TABLE_NAME,tg_user_id)
-    respons = cursor.execute(SELECT_ALL_DATA_QUERY).fetchall()
+    SELECT_USER_ID_QUERY = '''SELECT * FROM {} WHERE tg_user_id='{}' '''.format(DB_TABLE_NAME,tg_user_id)
+    respons = cursor.execute(SELECT_USER_ID_QUERY).fetchall()
     return respons
 
 def deleteUser(id,db_name = DB_TABLE_NAME):
