@@ -76,11 +76,11 @@ def updateCookies(tg_id,cookies,db_name = DB_TABLE_NAME):
 # client3 = selectUserId(tg_user_id=1742197944)
 # print(client3)
 
-# if __name__ == '__main__':
-#     test = selectAllData()
-#     print(len(test))
-#     for i in test:
-#         print(i)
+if __name__ == '__main__':
+    test = selectAllData()
+    print(len(test))
+    for i in test:
+        print(i)
 
 # # print(updateUserDisabled(8,0).fetchall())
 

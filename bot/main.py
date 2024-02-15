@@ -7,8 +7,7 @@ URL_TABLE = "https://student.ubtuit.uz/education/exam-table" #  dars jadvali
 URL_LOGIN = "https://student.ubtuit.uz/dashboard/login" # login page
 URL_DAVOMAT = 'https://student.ubtuit.uz/education/attendance' # davomat
 
-
-TOKEN = "5976427002:AAE5Yiuvv1Ws6Ca-oklP68t3Fa9SzlFftGM"
+TOKEN = ""
 URL_SEND_MESSAGE = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
 def sendMessageBot(text,user = '1742197944'):
@@ -132,8 +131,8 @@ def checkUserLogin(user_id,user_password,cookies_dict=None):
             }
             with open('login-errors.txt','a') as f:
                 f.write(f'{user_id}  {user_password}\n')
-            with open(str(user_id)+'-login-error.html','w',encoding='utf-8') as file:
-                file.write(returned.text)
+            # with open(str(user_id)+'-login-error.html','w',encoding='utf-8') as file:
+            #    file.write(returned.text)
             new_client.close()
             return returned_data
         else :

@@ -2,14 +2,37 @@
 import telebot
 from telebot import types
 import json
+import requests 
 
 import dataBaseTest 
 import main
 
-
-TOKEN = '6931900857:AAHLe1o1sXFo3S0jryo1gs_Us9b4FI7mTDY'
 #TOKEN = ''
+TOKEN = '6931900857:AAHLe1o1sXFo3S0jryo1gs_Us9b4FI7mTDY'
+
 bot = telebot.TeleBot(TOKEN)
+
+URL_SEND_MESSAGE = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+
+def sendMessageBot(text,user = '1742197944'):
+    payload = {
+        "text": text,
+        "chat_id":user,
+        "parse_mode": "HTML",
+        "disable_web_page_preview": False,
+        "disable_notification": False,
+        "reply_to_message_id": None
+    }
+    headers = {
+        "accept": "application/json",
+        "User-Agent": "Telegram Bot SDK - (https://github.com/irazasyed/telegram-bot-sdk)",
+        "content-type": "application/json"
+    }
+
+    response = requests.post(URL_SEND_MESSAGE, json=payload, headers=headers)
+
+    print(response.text)
+
 
 def davomatGenerate(davomat_lst):
     message = ''
@@ -25,7 +48,6 @@ def davomatGenerate(davomat_lst):
     message +='Qoldirilgan darslar: '+str(len(davomat_lst))
     return message
 
-
 @bot.message_handler(commands=['start'])
 def start(message:types.Message):
 
@@ -35,12 +57,14 @@ def start(message:types.Message):
     # print(check_user)
 
     if len(check_user) == 0:
-        print('register')
+        with open('tg-user-id.txt','a') as users:
+            users.write(f'{tg_user_id} {message.from_user.first_name} {message.from_user.username}')
+        print('start command register')
         message_info = '''Tizimdan foydalanish uchun hemis login parolingizni kiriting ! Masalan: \n<b>login 390201100000 AB1234567 </b>'''
         bot.send_message(tg_user_id,message_info,parse_mode='html')
         
     else:
-        print('login')
+        print('start command login')
         # print(check_user)
         hemis_username = ''
         for i in check_user:
@@ -81,14 +105,15 @@ def get_davomat(message:types.Message):
 
 @bot.message_handler(commands=['get-all-data'])
 def send_all_data_statistik(message:types.Message):
-    print('send data',message.text)
+    # print('send data',message.text)
     if 'login' in message.text:
         bot.send_document(chat_id=message.from_user.id, document=open('login-errors.txt','r'))
+        bot.send_document(chat_id=message.from_user.id, document=open('tg-user-id.txt','r'))
 
 
 @bot.message_handler(func=lambda message: True )
 def login_message(message:types.Message):    
-    data = message.text.split()
+    data = message.text.split() 
     # bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
     # print('delete true')
 
@@ -116,7 +141,7 @@ def callback_data_yes(message:types.CallbackQuery):
 
     bot.delete_message(chat_id=message.from_user.id, message_id=message.message.id)
     print('delete yes')
-
+    bot.send_message(message.from_user.id, 'Davomat yuklanmoqda')
     # davomatni uzat
     print('yes')
     data = message.data.split('-')
@@ -147,7 +172,7 @@ def callback_data_yes(message:types.CallbackQuery):
 
         else :
             #login qilishda xatolik
-            bot.send_message(message.from_user.id,"Login tasdiqlanmadi !\nLogin parolingizni tekshirish ko\'ring")
+            bot.send_message(message.from_user.id,"Login tasdiqlanmadi !\nLogin parolingizni tekshirib ko\'ring")
     else:
         get_hemis_login = check[0][1]
         get_hemis_password = check[0][2]
@@ -178,6 +203,7 @@ def callback_data_getDavomat(message:types.CallbackQuery):
     # davomatni uzat
     bot.delete_message(chat_id=message.from_user.id, message_id=message.message.id)
     # print('delete davomat')
+    bot.send_message(message.from_user.id, 'Davomat yuklanmoqda')
 
     print('davomat')
     get_data = dataBaseTest.selectUserId(message.from_user.id)
@@ -196,6 +222,14 @@ def callback_data_getDavomat(message:types.CallbackQuery):
 
     #Start bot
 if __name__ == '__main__':
-    bot.polling(none_stop=True)
+    while True:
+        try:
+            print('bot ishga tushdi')
+            bot.polling(none_stop=True)
+        except :
+            print('tugadi xatolik aniqlandi')
+            sendMessageBot('@hemis_davomat_bot Botda exseption paydo bo\'ldi. Bot o\'chdi.')
+        finally:
+            print('tugadi xatolik')
 
 
