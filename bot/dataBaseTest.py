@@ -56,13 +56,13 @@ def selectAllData():
 # telegram user borlgini tekshirish
 def selectUserId(tg_user_id):
     # telegram user borligini tekshirish
-    SELECT_USER_ID_QUERY = '''SELECT * FROM {} WHERE tg_user_id='{}' '''.format(DB_TABLE_NAME,tg_user_id)
+    SELECT_USER_ID_QUERY = '''SELECT * FROM {} WHERE tg_user_id='{}' AND user_disabled=1 '''.format(DB_TABLE_NAME,tg_user_id)
     respons = cursor.execute(SELECT_USER_ID_QUERY).fetchall()
     return respons
 
 def deleteUser(tg_user_id,db_name = DB_TABLE_NAME):
     DELETE_QUERY = '''DELETE FROM {} WHERE tg_user_id='{}';'''.format(db_name,tg_user_id)
-    respons = cursor.execute(DELETE_QUERY)
+    respons = cursor.execute(DELETE_QUERY).fetchall()
     data_base_connection.commit()
     return respons
 
@@ -71,6 +71,14 @@ def updateUserDisabled(tg_user_id,disabled = 0,db_name = DB_TABLE_NAME):
     respons = cursor.execute(UPDATE_QUERY)
     data_base_connection.commit()
     return respons
+
+def updateUserData(tg_user_id,hemis_user_id,hemis_user_password,db_name = DB_TABLE_NAME):
+    UPDATE_QUERY = f'''UPDATE {db_name} SET hemis_user_id = '{hemis_user_id}',hemis_user_password = '{hemis_user_password}' WHERE tg_user_id = '{tg_user_id}' ;'''
+    # print(UPDATE_QUERY)
+    respons = cursor.execute(UPDATE_QUERY)
+    data_base_connection.commit()
+    return respons
+
 def updateCookies(tg_id,cookies,db_name = DB_TABLE_NAME):
     UPDATE_QUERY = f'''UPDATE {db_name} SET hemis_cookies_dict = '{cookies}' WHERE tg_user_id = {tg_id} ;'''
     # print(UPDATE_QUERY)
@@ -93,6 +101,8 @@ def updateCookies(tg_id,cookies,db_name = DB_TABLE_NAME):
 if __name__ == '__main__':
     # test = selectAllData()
     # updateCookies('1742197944','{}')
+    # print(deleteUser('1742197944'))
+    # print(updateUserData('5106424489','1742197944','salom'))
     test = selectAllData()
     print(len(test))
     for i in test:
