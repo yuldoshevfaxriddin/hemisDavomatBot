@@ -53,10 +53,10 @@ def davomatGenerate(davomat_lst):
         📅 {i[2]}
         📚 {i[3]}
         🔖 {i[4]}
-        🤫 {i[5]} (Sabablimi ?)
+        🤫 (Sabablimi ?) {i[5]} 
         ⏲ {i[6]} soat
         👨‍🏫 {i[7]}\n '''
-    message +='Qoldirilgan darslar: '+str(len(davomat_lst))+' nb'
+    message +='Qoldirilgan darslar : '+str(len(davomat_lst))+' ta nb'
     return message
 
 @bot.message_handler(commands=['start'])
@@ -197,11 +197,16 @@ def bot_send_messages(message:types.Message):
         users_list.append(i[6])
     new_users_list = set(users_list)
     # barcha foydalanuvchilarga habar yuborish
-    for i in new_users_list:
-        bot.send_messages(i, message_text)
+
+    for user_id in new_users_list:
+        # print(type(i),i)
+        sendMessageBot(message_text,user_id)
     print(len(info)-1,' ta habar jo\'natildi')
-    bot.send_message('1742197944', str(message.from_user.id) + message_text)
-    # bot.send_message(message.from_user.id,message_text)
+    # print(new_users_list)
+    # print(new_users_list[1])
+    # print(type(new_users_list[1]))
+    # bot.send_message('1742197944', str(message.from_user.id) + message_text)
+    # bot.send_message(new_users_list[1],message_text)
 
 @bot.message_handler(func=lambda message: True )
 def login_message(message:types.Message):    
@@ -238,7 +243,6 @@ def callback_data_update(message:types.CallbackQuery):
     check = dataBaseTest.updateUserData(tg_user_id=message.from_user.id,hemis_user_id=hemis_login,hemis_user_password=hemis_password)
     bot.send_message(message.from_user.id,'Ma\'lumotlaringiz yangilandi !')
 
-  
 @bot.callback_query_handler(func=lambda message: message.data.startswith('yes'))
 def callback_data_yes(message:types.CallbackQuery):
 
@@ -301,8 +305,6 @@ def delete_user(message:types.Message):
     dataBaseTest.deleteUser(message.from_user.id)
     bot.send_message(message.from_user.id,user_info[0][3]+' ma\'lumotlari o\'chirildi.')
 
-
-
 @bot.callback_query_handler(func=lambda message: message.data.startswith('no'))
 def callback_data_no(message:types.CallbackQuery):
     data = message.data.split('-')
@@ -321,7 +323,7 @@ def callback_data_getDavomat(message:types.CallbackQuery):
 
     print('davomat')
     get_data = dataBaseTest.selectUserId(message.from_user.id)
-    print(get_data)
+    # print(get_data)
     if len(get_data) == 0:
         bot.send_message(message.from_user.id,'Botdan ro\'yxatdan o\'tmagansiz !')
         return 
@@ -342,15 +344,15 @@ def callback_data_getDavomat(message:types.CallbackQuery):
     #Start bot
 
 if __name__ == '__main__':
-    # bot.polling(none_stop=True)
-    while True:
-        try:
-            print('bot ishga tushdi')
-            bot.polling(none_stop=True)
-        except :
-            print('tugadi xatolik aniqlandi')
-            sendMessageBot('@hemis_davomat_bot Botda exseption paydo bo\'ldi. Bot o\'chdi.')
-        finally:
-            print('tugadi xatolik')
+    bot.polling(none_stop=True)
+    # while True:
+    #     try:
+    #         print('bot ishga tushdi')
+    #         bot.polling(none_stop=True)
+    #     except :
+    #         print('tugadi xatolik aniqlandi')
+    #         sendMessageBot('@hemis_davomat_bot Botda exseption paydo bo\'ldi. Bot o\'chdi.')
+    #     finally:
+    #         print('tugadi xatolik')
 
 
