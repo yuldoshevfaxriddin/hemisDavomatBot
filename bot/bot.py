@@ -28,10 +28,12 @@ def sendMessageBot(text,user = '1742197944'):
         "User-Agent": "Telegram Bot SDK - (https://github.com/irazasyed/telegram-bot-sdk)",
         "content-type": "application/json"
     }
+    try:
+        response = requests.post(URL_SEND_MESSAGE, json=payload, headers=headers)
 
-    response = requests.post(URL_SEND_MESSAGE, json=payload, headers=headers)
-
-    print(response.text)
+        print(response.text)
+    except:
+        print("Internetga ulanmagan o'xshidi ov ...")
 
 
 def davomatGenerate(davomat_lst):
@@ -43,9 +45,9 @@ def davomatGenerate(davomat_lst):
         📚 {i[3]}
         🔖 {i[4]}
         🤫 {i[5]} (Sabablimi ?)
-        ⏲ {i[6]}
+        ⏲ {i[6]} soat
         👨‍🏫 {i[7]}\n '''
-    message +='Qoldirilgan darslar: '+str(len(davomat_lst))
+    message +='Qoldirilgan darslar: '+str(len(davomat_lst))+' nb'
     return message
 
 @bot.message_handler(commands=['start'])
@@ -58,7 +60,7 @@ def start(message:types.Message):
 
     if len(check_user) == 0:
         with open('tg-user-id.txt','a') as users:
-            users.write(f'{tg_user_id} {message.from_user.first_name} {message.from_user.username}')
+            users.write(f'{tg_user_id} {message.from_user.first_name} {message.from_user.username}\n')
         print('start command register')
         message_info = '''Tizimdan foydalanish uchun hemis login parolingizni kiriting ! Masalan: \n<b>login 390201100000 AB1234567 </b>'''
         bot.send_message(tg_user_id,message_info,parse_mode='html')

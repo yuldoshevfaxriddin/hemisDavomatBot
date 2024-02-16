@@ -8,6 +8,7 @@ URL_LOGIN = "https://student.ubtuit.uz/dashboard/login" # login page
 URL_DAVOMAT = 'https://student.ubtuit.uz/education/attendance' # davomat
 
 TOKEN = ""
+TOKEN = '6931900857:AAHLe1o1sXFo3S0jryo1gs_Us9b4FI7mTDY'
 URL_SEND_MESSAGE = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
 def sendMessageBot(text,user = '1742197944'):
@@ -28,6 +29,12 @@ def sendMessageBot(text,user = '1742197944'):
     response = r.post(URL_SEND_MESSAGE, json=payload, headers=headers)
 
     print(response.text)
+
+# users = ['1117199815','471164187','829533822','5693850607','14175915825553','5409062491','5409062491','1915613345','1874742042','5008446989']
+# for i in users:
+#     message = "Texnik ishlarga ko'ra bot ish faoliyatini yakunlaydi. Ishga tushish vaqti 20:00"
+#     sendMessageBot(message,i)
+    
 
 def getSemestrsList(base_html):
     soup = bs4.BeautifulSoup(base_html,'lxml')

@@ -20,7 +20,20 @@ def createTable(db_name=DB_TABLE_NAME):
         tg_last_name varchar(50),
         user_disabled INTEGER 
     );'''.format(db_name)
-  
+    """
+    (
+     1,
+     '390201100297',
+     '390201100297d',
+     'YO‘LDOSHOV F. U.',
+     'https://hemis.ubtuit.uz/static/crop/3/3/120_120_90_3343658253.jpg',
+     '{"_frontendUser": "e65d589ae348dcb1cbdfaae24486c23040114a27b01dd93da24890ddd609bf34a%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_frontendUser%22%3Bi%3A1%3Bs%3A46%3A%22%5B%2218%22%2C%22tG3FjTMA1yF6uNcm2Wx7O3KVRIU2ETxP%22%2C3600%5D%22%3B%7D"}',
+     '1742197944',
+     'Faxriddin_yuldoshev',
+     'Faxriddin Yuldoshev',
+     'Faxriddin Yuldoshev',
+     1)
+    """
     respons = cursor.execute(TABLE_CREATE_QUERY)
     # cursor.close()
     return respons
@@ -47,19 +60,20 @@ def selectUserId(tg_user_id):
     respons = cursor.execute(SELECT_USER_ID_QUERY).fetchall()
     return respons
 
-def deleteUser(id,db_name = DB_TABLE_NAME):
-    DELETE_QUERY = '''DELETE FROM {} WHERE id='{}';'''.format(db_name,id)
+def deleteUser(tg_user_id,db_name = DB_TABLE_NAME):
+    DELETE_QUERY = '''DELETE FROM {} WHERE tg_user_id='{}';'''.format(db_name,tg_user_id)
     respons = cursor.execute(DELETE_QUERY)
     data_base_connection.commit()
     return respons
 
-def updateUserDisabled(id,disabled = 1,db_name = DB_TABLE_NAME):
-    UPDATE_QUERY = f'''UPDATE {db_name} SET user_disabled = {disabled} WHERE id = {id} ;'''
+def updateUserDisabled(tg_user_id,disabled = 0,db_name = DB_TABLE_NAME):
+    UPDATE_QUERY = f'''UPDATE {db_name} SET user_disabled = {disabled} WHERE tg_user_id = {tg_user_id} ;'''
     respons = cursor.execute(UPDATE_QUERY)
     data_base_connection.commit()
     return respons
 def updateCookies(tg_id,cookies,db_name = DB_TABLE_NAME):
-    UPDATE_QUERY = f'''UPDATE {db_name} SET hemis_cookies_dict = '{cookies}' WHERE id = {tg_id} ;'''
+    UPDATE_QUERY = f'''UPDATE {db_name} SET hemis_cookies_dict = '{cookies}' WHERE tg_user_id = {tg_id} ;'''
+    # print(UPDATE_QUERY)
     respons = cursor.execute(UPDATE_QUERY)
     data_base_connection.commit()
     return respons
@@ -77,10 +91,15 @@ def updateCookies(tg_id,cookies,db_name = DB_TABLE_NAME):
 # print(client3)
 
 if __name__ == '__main__':
+    # test = selectAllData()
+    updateCookies('1742197944','{}')
     test = selectAllData()
     print(len(test))
     for i in test:
         print(i)
+
+
+
 
 # # print(updateUserDisabled(8,0).fetchall())
 
