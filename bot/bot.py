@@ -12,7 +12,14 @@ TOKEN = '6931900857:AAHLe1o1sXFo3S0jryo1gs_Us9b4FI7mTDY'
 
 bot = telebot.TeleBot(TOKEN)
 
-
+HELP_MESSAGE = """ 
+/start - Botni ishga tushirish
+/davomat - Davomatni olish
+/profil - Profil ma'lumotlarini ko'rish
+/delete - Profil ma'lumotlarini botdan o'chirib tashlash
+/help - Botdan foydalanish haqida qo'llanma
+Xato, kamchiliklar, takliflar bo'yicha quyidagi accauntga murojat qilishingiz mumkin! @Faxriddin_yuldoshev 
+"""
 
 URL_SEND_MESSAGE = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
@@ -169,15 +176,8 @@ def delete_user(message:types.Message):
 @bot.message_handler(commands=['help'])
 def help_comman(message:types.Message):
     print('help')
-    help_text = """ 
-/start - Botni ishga tushirish
-/davomat - Davomatni olish
-/profil - Profil ma'lumotlarini ko'rish
-/delete - Profil ma'lumotlarini botdan o'chirib tashlash
-/help - Botdan foydalanish haqida qo'llanma
-Xato, kamchiliklar, takliflar bo'yicha quyidagi accauntga murojat qilishingiz mumkin! @Faxriddin_yuldoshev 
-"""
-    bot.send_message(message.from_user.id,help_text)
+   
+    bot.send_message(message.from_user.id,HELP_MESSAGE)
 
 
 @bot.message_handler(commands=['send-message'])
@@ -342,15 +342,15 @@ def callback_data_getDavomat(message:types.CallbackQuery):
     #Start bot
 
 if __name__ == '__main__':
-    bot.polling(none_stop=True)
-    # while True:
-    #     try:
-    #         print('bot ishga tushdi')
-    #         bot.polling(none_stop=True)
-    #     except :
-    #         print('tugadi xatolik aniqlandi')
-    #         sendMessageBot('@hemis_davomat_bot Botda exseption paydo bo\'ldi. Bot o\'chdi.')
-    #     finally:
-    #         print('tugadi xatolik')
+    # bot.polling(none_stop=True)
+    while True:
+        try:
+            print('bot ishga tushdi')
+            bot.polling(none_stop=True)
+        except :
+            print('tugadi xatolik aniqlandi')
+            sendMessageBot('@hemis_davomat_bot Botda exseption paydo bo\'ldi. Bot o\'chdi.')
+        finally:
+            print('tugadi xatolik')
 
 
