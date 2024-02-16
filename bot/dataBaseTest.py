@@ -92,7 +92,7 @@ def updateCookies(tg_id,cookies,db_name = DB_TABLE_NAME):
 
 if __name__ == '__main__':
     # test = selectAllData()
-    updateCookies('1742197944','{}')
+    # updateCookies('1742197944','{}')
     test = selectAllData()
     print(len(test))
     for i in test:

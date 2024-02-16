@@ -25,7 +25,7 @@ def sendMessageBot(text,user = '1742197944'):
     }
     headers = {
         "accept": "application/json",
-        "User-Agent": "Telegram Bot SDK - (https://github.com/irazasyed/telegram-bot-sdk)",
+        "User-Agent": "Telegram Bot Yuldoshev Faxriddin (https://github.com/yuldoshevfaxriddin/)",
         "content-type": "application/json"
     }
     try:
@@ -111,6 +111,29 @@ def send_all_data_statistik(message:types.Message):
     if 'login' in message.text:
         bot.send_document(chat_id=message.from_user.id, document=open('login-errors.txt','r'))
         bot.send_document(chat_id=message.from_user.id, document=open('tg-user-id.txt','r'))
+
+@bot.message_handler(commands=['send-message'])
+def bot_send_messages(message:types.Message):
+    print('send message')    
+    message_text = message.text[14:]
+    with open('tg-user-id.txt','r') as file:
+        all_info = file.read()
+        info = all_info.split('\n')
+
+    users_list = []
+    users_db = dataBaseTest.selectAllData()
+    for i in info:
+        if len(i) != 0:
+            # print(i.split()[0])
+            users_list.append(i.split()[0])
+            # bot.send_messages(i.split()[0], message_text)
+            # bot.send_message('1742197944', message_text)
+    print(len(info)-1,' ta habar jo\'natildi')
+    for i in users_db:
+        users_list.append(i[6])
+    new_users_list = set(users_list)
+    print(len(users_list),users_list)
+    print(len(new_users_list),new_users_list)
 
 
 @bot.message_handler(func=lambda message: True )
