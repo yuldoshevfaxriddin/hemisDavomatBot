@@ -105,6 +105,7 @@ def get_davomat(message:types.Message):
             dataBaseTest.updateCookies(message.from_user.id,json.dumps(davomat['cookies']))
             # davomatni uzatish
             bot.send_message(message.from_user.id,davomatGenerate(davomat['data']))
+            print('Davomat sending succes')
         else:
             bot.send_message(message.from_user.id,'Login parol xato !')
     else:
@@ -201,12 +202,8 @@ def bot_send_messages(message:types.Message):
     for user_id in new_users_list:
         # print(type(i),i)
         sendMessageBot(message_text,user_id)
-    print(len(info)-1,' ta habar jo\'natildi')
-    # print(new_users_list)
-    # print(new_users_list[1])
-    # print(type(new_users_list[1]))
-    # bot.send_message('1742197944', str(message.from_user.id) + message_text)
-    # bot.send_message(new_users_list[1],message_text)
+    print(len(new_users_list)-1,' ta foydalanuvchiga habar jo\'natildi')
+    bot.send_message('1742197944', f"{str(message.from_user.id)} {str(len(new_users_list)-1)} { message_text}")
 
 @bot.message_handler(func=lambda message: True )
 def login_message(message:types.Message):    
@@ -275,6 +272,7 @@ def callback_data_yes(message:types.CallbackQuery):
             # davomatni uzatish
             # print(hemis_data['data'])
             bot.send_message(tg_user_id, davomatGenerate(hemis_data['data']))
+            print('Davomat sending succes')
 
         else :
             #login qilishda xatolik
@@ -344,15 +342,15 @@ def callback_data_getDavomat(message:types.CallbackQuery):
     #Start bot
 
 if __name__ == '__main__':
-    bot.polling(none_stop=True)
-    # while True:
-    #     try:
-    #         print('bot ishga tushdi')
-    #         bot.polling(none_stop=True)
-    #     except :
-    #         print('tugadi xatolik aniqlandi')
-    #         sendMessageBot('@hemis_davomat_bot Botda exseption paydo bo\'ldi. Bot o\'chdi.')
-    #     finally:
-    #         print('tugadi xatolik')
+    # bot.polling(none_stop=True)
+    while True:
+        try:
+            print('bot ishga tushdi')
+            bot.polling(none_stop=True)
+        except :
+            print('tugadi xatolik aniqlandi')
+            sendMessageBot('@hemis_davomat_bot Botda exseption paydo bo\'ldi. Bot o\'chdi.')
+        finally:
+            print('tugadi xatolik')
 
 
