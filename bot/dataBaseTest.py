@@ -1,6 +1,9 @@
 import sqlite3
 
-DB_NAME = "hemisInfo.db"
+FOR_SERVER_DB = 'bot/hemisInfo.db'
+# DB_NAME = "hemisInfo.db"
+# botni serverda ishlatish uchun FOR_SERVER_DB ni commentdan chiqqan bo'lishi kerak
+DB_NAME = FOR_SERVER_DB
 DB_TABLE_NAME = ' USERS '
 
 data_base_connection = sqlite3.connect(DB_NAME,check_same_thread=False,)
@@ -89,15 +92,6 @@ def updateCookies(tg_id,cookies,db_name = DB_TABLE_NAME):
 
 # createTable()
 
-# client1 = insertData(hemis_user_id='390201100297',hemis_user_password='390201100297d',hemis_profil='Yuldoshev Faxriddin',tg_user_id='sacs1742197944',tg_username='yuldoshev_faxriddin',tg_first_name='yuldoshev',tg_last_name='faxriddin')
-# client2 = insertData(hemis_user_id='390201100297',hemis_user_password='390201100297d',hemis_profil='Yuldoshev Faxriddin',tg_user_id=1742197944,tg_username='yuldoshev_faxriddin',tg_first_name='yuldoshev',tg_last_name='faxriddin')
-# print(client1)
-# print(client2)
-# client3 = selectUserId(tg_user_id=12)
-# print(client3)
-# client3 = selectUserId(tg_user_id=1742197944)
-# print(client3)
-
 if __name__ == '__main__':
     # test = selectAllData()
     # updateCookies('1742197944','{}')
@@ -110,19 +104,3 @@ if __name__ == '__main__':
 
 
 
-
-# # print(updateUserDisabled(8,0).fetchall())
-
-# test = selectAllData()
-# for i in test:
-#     print(i)
-
-# cursor.close()
-# # data_base_connection.commit()
-# data_base_connection.close()
-
-
-
-
-# INSERT INTO  USERS  (hemis_user_id,hemis_user_password,hemis_profil,hemis_profil_image,hemis_cookies_dict,tg_user_id,tg_username,tg_first_name,tg_last_name,user_disabled)  
-#                                 VALUES ('390201100297','390201100297d','YO‘LDOSHOV F. U.  941-20DIo'','https://hemis.ubtuit.uz/static/crop/3/3/120_120_90_3343658253.jpg','{"_frontendUser": "e65d589ae348dcb1cbdfaae24486c23040114a27b01dd93da24890ddd609bf34a%3A2%3A%7Bi%3A0%3Bs%3A13%3A%22_frontendUser%22%3Bi%3A1%3Bs%3A46%3A%22%5B%2218%22%2C%22tG3FjTMA1yF6uNcm2Wx7O3KVRIU2ETxP%22%2C3600%5D%22%3B%7D"}','1742197944','Faxriddin_yuldoshev','Faxriddin Yuldoshev','Faxriddin Yuldoshev','1');

@@ -342,15 +342,20 @@ def callback_data_getDavomat(message:types.CallbackQuery):
     #Start bot
 
 if __name__ == '__main__':
-    # bot.polling(none_stop=True)
+    bot.polling(none_stop=True)
+    '''
     while True:
         try:
             print('bot ishga tushdi')
             bot.polling(none_stop=True)
+        except KeyboardInterrupt:
+            print ('Interrupted')
+            break
+            # sys.exit(0)
         except :
             print('tugadi xatolik aniqlandi')
             sendMessageBot('@hemis_davomat_bot Botda exseption paydo bo\'ldi. Bot o\'chdi.')
         finally:
             print('tugadi xatolik')
-
+    '''
 
